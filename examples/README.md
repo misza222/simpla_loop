@@ -29,32 +29,7 @@ python list_folder.py
 - Creating an LLM reasoner
 - Running with bash tool
 
-### 2. `llm_agent_example.py` - Full Featured Demo
-Complete example with detailed output and trace inspection.
-
-```bash
-python llm_agent_example.py
-```
-
-**Demonstrates:**
-- Full agent setup with LLM
-- Execution trace inspection
-- Error handling
-
-### 3. `custom_gateway.py` - Custom API Gateway
-Using non-OpenAI endpoints (Azure, local LLMs, proxies).
-
-```bash
-# Set in .env or pass explicitly
-OPENAI_BASE_URL=https://gateway.example.com/v1
-python custom_gateway.py
-```
-
-**Demonstrates:**
-- Custom `base_url` configuration
-- Environment variable usage
-
-### 4. `multi_step_task.py` - Complex Tasks
+### 2. `multi_step_task.py` - Complex Tasks
 Agent performing multiple steps with file operations.
 
 ```bash
@@ -66,19 +41,7 @@ python multi_step_task.py
 - Higher retry limits
 - Task completion verification
 
-### 5. `mock_vs_llm.py` - Comparison
-Side-by-side comparison of mock and LLM reasoners.
-
-```bash
-python mock_vs_llm.py
-```
-
-**Demonstrates:**
-- Mock reasoner (deterministic, no API)
-- LLM reasoner (flexible, requires API)
-- When to use each approach
-
-### 6. `debugging_trace.py` - Debugging & Inspection
+### 3. `debugging_trace.py` - Debugging & Inspection
 How to inspect agent execution for debugging.
 
 ```bash
@@ -90,18 +53,6 @@ python debugging_trace.py
 - Inspecting step details
 - Memory contents
 - Observation handling
-
-### 7. `custom_prompt.py` - Custom System Prompts
-Modifying the LLM's behavior with custom system prompts.
-
-```bash
-python custom_prompt.py
-```
-
-**Demonstrates:**
-- Custom system prompt
-- Changing agent personality
-- Accessing default prompt
 
 ## Quick Start
 
