@@ -1,48 +1,6 @@
-"""Tests for Tool implementations."""
+"""Tests for BashTool."""
 
-from simpla_loop.core.tool import ToolParameter, ToolResult
 from simpla_loop.tools.bash import BashResult, BashTool
-
-
-class TestToolResult:
-    """Test suite for ToolResult."""
-
-    def test_ok_factory(self):
-        """ok() should create successful result."""
-        result = ToolResult.ok("data")
-
-        assert result.success is True
-        assert result.data == "data"
-        assert result.error is None
-
-    def test_fail_factory(self):
-        """fail() should create failed result."""
-        result = ToolResult.fail("error message")
-
-        assert result.success is False
-        assert result.data is None
-        assert result.error == "error message"
-
-
-class TestToolParameter:
-    """Test suite for ToolParameter."""
-
-    def test_required_defaults_true(self):
-        """Required should default to True."""
-        param = ToolParameter(name="test", type="string", description="test param")
-        assert param.required is True
-
-    def test_optional_with_default(self):
-        """Optional parameter can have default."""
-        param = ToolParameter(
-            name="test",
-            type="integer",
-            description="test param",
-            required=False,
-            default=42,
-        )
-        assert param.required is False
-        assert param.default == 42
 
 
 class TestBashTool:

@@ -162,7 +162,7 @@ def create_react_reasoner(
         A reasoner function compatible with ReActLoop
 
     Raises:
-        ValueError: If API key is not provided and not in environment
+        ConfigError: If API key is not provided and not in environment
 
     Example:
         >>> # Using environment variables
@@ -193,7 +193,7 @@ def create_react_reasoner(
     if max_retries is not None:
         config_kwargs["max_retries"] = max_retries
 
-    config = OpenAIConfig.from_env(**config_kwargs)
+    config = OpenAIConfig(**config_kwargs)
     client = create_instructor_client(config)
 
     sys_prompt = REACT_SYSTEM_PROMPT

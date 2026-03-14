@@ -25,6 +25,8 @@ Example:
 from dataclasses import dataclass
 from typing import Any
 
+import structlog
+
 from simpla_loop.core.loop import Loop
 from simpla_loop.core.memory import Memory
 from simpla_loop.core.tool import Tool
@@ -121,6 +123,7 @@ class Agent:
         self.memory = memory
         self.tools = tools
         self.config = config or AgentConfig()
+        self._logger = structlog.get_logger()
 
         # Store last execution trace for inspection
         self._last_trace: Any = None
@@ -149,7 +152,7 @@ class Agent:
             final_answer from the reasoner.
 
         Raises:
-            RuntimeError: If max_iterations is reached (from loop.run()).
+            LoopError: If max_iterations is reached (from loop.run()).
             Exception: Any exception from the loop or tools propagates.
 
         Example:
@@ -178,7 +181,7 @@ class Agent:
         self._last_trace = getattr(self.loop, "_last_trace", None)
 
         if self.config.debug:
-            print(f"[Agent] Completed. Memory contents: {self.memory.get_all()}")
+            self._logger.debug("agent_completed", memory=self.memory.get_all())
 
         return result
 
