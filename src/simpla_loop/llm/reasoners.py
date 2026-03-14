@@ -5,14 +5,14 @@ to generate structured reasoning outputs for agentic loops.
 """
 
 import json
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from simpla_loop.core.tool import Tool
 from simpla_loop.llm.client import OpenAIConfig, create_instructor_client
 from simpla_loop.llm.models import ReActResponse, ToolInfo
 
 if TYPE_CHECKING:
-    from simpla_loop.loops.react import ReActStep
+    from simpla_loop.loops.react import ReActStep, Reasoner
 
 
 # Default system prompt for ReAct reasoning
@@ -134,7 +134,7 @@ def create_react_reasoner(
     api_key: str | None = None,
     base_url: str | None = None,
     max_retries: int | None = None,
-):
+) -> "Reasoner":
     """Create a reasoner function for ReActLoop using an LLM.
 
     This factory function creates a reasoner that uses Instructor-patched
@@ -183,7 +183,7 @@ def create_react_reasoner(
         (query: str, steps: list[ReActStep], tools: list[Tool]) -> dict
     """
     # Build config from env + overrides
-    config_kwargs = {}
+    config_kwargs: dict[str, str | int] = {}
     if api_key is not None:
         config_kwargs["api_key"] = api_key
     if base_url is not None:
@@ -193,12 +193,14 @@ def create_react_reasoner(
     if max_retries is not None:
         config_kwargs["max_retries"] = max_retries
 
-    config = OpenAIConfig(**config_kwargs)
+    config = OpenAIConfig(**config_kwargs)  # type: ignore[arg-type]
     client = create_instructor_client(config)
 
     sys_prompt = REACT_SYSTEM_PROMPT
 
-    def reasoner(query: str, steps: list["ReActStep"], tools: list[Tool]) -> dict:
+    def reasoner(
+        query: str, steps: list["ReActStep"], tools: list[Tool]
+    ) -> dict[str, Any]:
         """Generate the next reasoning step using LLM.
 
         Args:
@@ -229,6 +231,7 @@ def create_react_reasoner(
         )
 
         # Convert to dict format expected by ReActLoop
-        return response.to_reasoner_dict()
+        result: dict[str, Any] = response.to_reasoner_dict()
+        return result
 
     return reasoner

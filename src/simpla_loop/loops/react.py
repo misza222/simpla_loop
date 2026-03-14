@@ -71,7 +71,7 @@ class ReActStep:
 
     thought: str
     action: str | None = None
-    action_input: dict | None = None
+    action_input: dict[str, Any] | None = None
     observation: Any = None
     is_final: bool = False
 
@@ -138,7 +138,7 @@ class ReActState:
 
 # Type alias for the reasoning function
 # This is the hook for LLM integration
-Reasoner = Callable[[str, list[ReActStep], list[Tool]], dict]
+Reasoner = Callable[[str, list[ReActStep], list[Tool]], dict[str, Any]]
 """Type alias for the reasoning function.
 
 A Reasoner takes:

@@ -6,7 +6,7 @@ automatically from environment variables or can be overridden via
 constructor arguments.
 """
 
-import instructor
+import instructor  # type: ignore[import-untyped]
 from openai import OpenAI
 from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict

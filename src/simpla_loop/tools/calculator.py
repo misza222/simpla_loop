@@ -54,13 +54,15 @@ def _safe_eval(node: ast.AST) -> int | float:
         op_func = _UNARY_OPS.get(type(node.op))
         if op_func is None:
             raise ValueError(f"Unsupported unary operator: {type(node.op).__name__}")
-        return op_func(_safe_eval(node.operand))
+        result: int | float = op_func(_safe_eval(node.operand))
+        return result
 
     if isinstance(node, ast.BinOp):
         op_func = _BINARY_OPS.get(type(node.op))
         if op_func is None:
             raise ValueError(f"Unsupported operator: {type(node.op).__name__}")
-        return op_func(_safe_eval(node.left), _safe_eval(node.right))
+        result = op_func(_safe_eval(node.left), _safe_eval(node.right))
+        return result
 
     raise ValueError(
         f"Unsupported expression element: {type(node).__name__}. "
