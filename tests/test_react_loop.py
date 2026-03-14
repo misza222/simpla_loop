@@ -4,8 +4,7 @@ from typing import Any
 
 import pytest
 
-from simpla_loop.core.loop import LoopResult
-from simpla_loop.core.tool import Tool, ToolParameter, ToolResult
+from simpla_loop.core.tool import Tool, ToolResult
 from simpla_loop.loops.react import ReActLoop, ReActState, ReActStep
 from simpla_loop.memory.in_memory import InMemoryMemory
 

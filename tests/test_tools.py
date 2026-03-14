@@ -1,9 +1,7 @@
 """Tests for Tool implementations."""
 
-import pytest
-
 from simpla_loop.core.tool import ToolParameter, ToolResult
-from simpla_loop.tools.bash import BashTool, BashResult
+from simpla_loop.tools.bash import BashResult, BashTool
 
 
 class TestToolResult:
@@ -116,7 +114,6 @@ class TestBashTool:
     def test_execute_cwd(self):
         """Should respect working directory."""
         import tempfile
-        import os
 
         with tempfile.TemporaryDirectory() as tmpdir:
             tool = BashTool(cwd=tmpdir)

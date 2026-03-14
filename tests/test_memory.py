@@ -1,7 +1,5 @@
 """Tests for InMemoryMemory implementation."""
 
-import pytest
-
 from simpla_loop.memory.in_memory import InMemoryMemory
 
 

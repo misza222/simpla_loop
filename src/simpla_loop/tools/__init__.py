@@ -14,6 +14,6 @@ Example:
     >>> result = tool.execute(command="echo hello")
 """
 
-from simpla_loop.tools.bash import BashTool, BashResult
+from simpla_loop.tools.bash import BashResult, BashTool
 
 __all__ = ["BashTool", "BashResult"]

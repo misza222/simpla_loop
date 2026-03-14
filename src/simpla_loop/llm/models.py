@@ -51,19 +51,29 @@ class ReActResponse(BaseModel):
 
     thought: str = Field(
         ...,
-        description="Your reasoning about what to do next. Explain your thinking process clearly.",
+        description=(
+            "Your reasoning about what to do next."
+            " Explain your thinking process clearly."
+        ),
     )
     action: str | None = Field(
         None,
-        description="The name of the tool to use, or null if you're providing the final answer",
+        description=(
+            "The name of the tool to use, or null if you're providing the final answer"
+        ),
     )
     action_input: dict[str, Any] = Field(
         default_factory=dict,
-        description="The input parameters for the tool, as a JSON object. Empty if no action.",
+        description=(
+            "The input parameters for the tool, as a JSON object. Empty if no action."
+        ),
     )
     final_answer: str | None = Field(
         None,
-        description="Your final answer to the user's question. Only provide this when you're done.",
+        description=(
+            "Your final answer to the user's question."
+            " Only provide this when you're done."
+        ),
     )
 
     @model_validator(mode="after")
@@ -107,7 +117,8 @@ class ReActResponse(BaseModel):
         Example:
             >>> r = ReActResponse(thought="test", action="tool", action_input={"x": 1})
             >>> r.to_reasoner_dict()
-            {'thought': 'test', 'action': 'tool', 'action_input': {'x': 1}, 'final_answer': None}
+            {'thought': 'test', 'action': 'tool', 'action_input': {'x': 1},
+            'final_answer': None}
         """
         return {
             "thought": self.thought,

@@ -152,11 +152,11 @@ from simpla_loop.tools.bash import BashTool
 
 def main():
     load_dotenv()
-    
+
     if not os.getenv("OPENAI_API_KEY"):
         print("Error: OPENAI_API_KEY required")
         sys.exit(1)
-    
+
     # Your code here
     reasoner = create_react_reasoner()
     agent = Agent(...)

@@ -55,7 +55,7 @@ def print_trace(trace):
                     print(f"   Observation: {obs}")
 
         if step.is_final:
-            print(f"   🏁 Final Answer")
+            print("   🏁 Final Answer")
 
     print("\n" + "=" * 70)
 
@@ -80,7 +80,10 @@ def main():
     )
 
     # Task that requires multiple steps
-    query = "Count how many Markdown files are in the current directory. Do not use | (pipe) in bash commands and execute one bash command at a time."
+    query = (
+        "Count how many Markdown files are in the current directory and all subfolders."
+        " Do not use | (pipe) in bash commands and execute one bash command at a time."
+    )
     print(f"Task: {query}\n")
 
     result = agent.run(query)

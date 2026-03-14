@@ -201,7 +201,7 @@ class Loop(ABC, Generic[StateT]):
             ...     print(f"Loop timed out: {e}")
         """
         state = initial_state
-        for i in range(max_iterations):
+        for _ in range(max_iterations):
             result = self.step(state, memory, tools)
             state = result.state
             if result.done:

@@ -28,8 +28,9 @@ Example:
     >>> result = loop.run(state, memory, [calculator_tool])
 """
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any
 
 from simpla_loop.core.loop import Loop, LoopResult
 from simpla_loop.core.memory import Memory

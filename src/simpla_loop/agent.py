@@ -22,7 +22,7 @@ Example:
     >>> print(result)
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 from simpla_loop.core.loop import Loop

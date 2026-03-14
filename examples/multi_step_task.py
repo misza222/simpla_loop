@@ -54,6 +54,7 @@ def main():
     query = """
     Create a file called /tmp/test_agent.txt with the content "Hello from Agent!",
     then read it back and confirm the content matches what was written.
+    Finally remove the file.
     """
 
     print(f"Task: {query.strip()}\n")
@@ -62,7 +63,7 @@ def main():
     result = agent.run(query)
 
     print("=" * 60)
-    print(f"\n✅ Task completed!")
+    print("\n✅ Task completed!")
     print(f"Final answer: {result}")
 
     # Show trace
