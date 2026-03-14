@@ -51,19 +51,29 @@ class ReActResponse(BaseModel):
 
     thought: str = Field(
         ...,
-        description="Your reasoning about what to do next. Explain your thinking process clearly.",
+        description=(
+            "Your reasoning about what to do next."
+            " Explain your thinking process clearly."
+        ),
     )
     action: str | None = Field(
         None,
-        description="The name of the tool to use, or null if you're providing the final answer",
+        description=(
+            "The name of the tool to use, or null if you're providing the final answer"
+        ),
     )
     action_input: dict[str, Any] = Field(
         default_factory=dict,
-        description="The input parameters for the tool, as a JSON object. Empty if no action.",
+        description=(
+            "The input parameters for the tool, as a JSON object. Empty if no action."
+        ),
     )
     final_answer: str | None = Field(
         None,
-        description="Your final answer to the user's question. Only provide this when you're done.",
+        description=(
+            "Your final answer to the user's question."
+            " Only provide this when you're done."
+        ),
     )
 
     @model_validator(mode="after")
@@ -75,7 +85,9 @@ class ReActResponse(BaseModel):
 
     @field_validator("action_input")
     @classmethod
-    def validate_action_input(cls, action_input: dict, info) -> dict:
+    def validate_action_input(
+        cls, action_input: dict[str, Any], info: Any
+    ) -> dict[str, Any]:
         """Ensure action_input is provided when action is set."""
         values = info.data
         action = values.get("action")
@@ -98,7 +110,7 @@ class ReActResponse(BaseModel):
         """
         return self.final_answer is not None
 
-    def to_reasoner_dict(self) -> dict:
+    def to_reasoner_dict(self) -> dict[str, Any]:
         """Convert to dict format expected by ReActLoop.
 
         Returns:
@@ -107,7 +119,8 @@ class ReActResponse(BaseModel):
         Example:
             >>> r = ReActResponse(thought="test", action="tool", action_input={"x": 1})
             >>> r.to_reasoner_dict()
-            {'thought': 'test', 'action': 'tool', 'action_input': {'x': 1}, 'final_answer': None}
+            {'thought': 'test', 'action': 'tool', 'action_input': {'x': 1},
+            'final_answer': None}
         """
         return {
             "thought": self.thought,
@@ -126,7 +139,7 @@ class ToolInfo(BaseModel):
 
     name: str
     description: str
-    parameters: list[dict]
+    parameters: list[dict[str, Any]]
 
     @classmethod
     def from_tool(cls, tool: Tool) -> "ToolInfo":

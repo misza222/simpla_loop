@@ -23,6 +23,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, Generic, TypeVar
 
+from simpla_loop.core.exceptions import LoopError
 from simpla_loop.core.memory import Memory
 from simpla_loop.core.tool import Tool
 
@@ -190,24 +191,24 @@ class Loop(ABC, Generic[StateT]):
             The type depends on the specific loop implementation.
 
         Raises:
-            RuntimeError: If max_iterations is reached without completion.
-                         The error message includes the final state for debugging.
+            LoopError: If max_iterations is reached without completion.
+                       The error message includes the final state for debugging.
             Exception: Any exception raised by step() will propagate.
 
         Example:
             >>> try:
             ...     answer = loop.run(initial_state, memory, tools, max_iterations=20)
-            ... except RuntimeError as e:
+            ... except LoopError as e:
             ...     print(f"Loop timed out: {e}")
         """
         state = initial_state
-        for i in range(max_iterations):
+        for _ in range(max_iterations):
             result = self.step(state, memory, tools)
             state = result.state
             if result.done:
                 return result.output
 
-        raise RuntimeError(
+        raise LoopError(
             f"Loop did not complete within {max_iterations} iterations. "
             f"Final state: {state}"
         )

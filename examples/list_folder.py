@@ -54,7 +54,7 @@ def main():
     )
 
     # Ask the agent to list files
-    query = "List files in the current directory"
+    query = "List files in the current directory as json array."
     print(f"Query: {query}\n")
     print("-" * 50)
 

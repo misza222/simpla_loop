@@ -26,7 +26,7 @@ flowchart TD
     Update --> LoopStart
     Final --> Done([Done])
     LoopStart -->|No/Max Iter| Done
-    
+
     style Think fill:#e1f5fe
     style Action fill:#f3e5f5
     style Observe fill:#e8f5e9
@@ -44,7 +44,7 @@ classDiagram
         +step(state, memory, tools) LoopResult
         +run(initial_state, memory, tools, max_iterations) Any
     }
-    
+
     class Memory {
         <<abstract>>
         +add(key, value)
@@ -52,7 +52,7 @@ classDiagram
         +list_keys() List
         +clear()
     }
-    
+
     class Tool {
         <<abstract>>
         +name str
@@ -60,25 +60,25 @@ classDiagram
         +parameters List
         +execute(**kwargs) ToolResult
     }
-    
+
     class ReActLoop {
         +reasoner Callable
         +step(state, memory, tools) LoopResult
     }
-    
+
     class InMemoryMemory {
         -_store Dict
         +add(key, value)
         +get(key) Any
     }
-    
+
     class BashTool {
         +name "bash"
         +timeout int
         +cwd str
         +execute(command) ToolResult
     }
-    
+
     class Agent {
         +loop Loop
         +memory Memory
@@ -86,7 +86,7 @@ classDiagram
         +run(query) Any
         +reset()
     }
-    
+
     Loop <|-- ReActLoop
     Memory <|-- InMemoryMemory
     Tool <|-- BashTool
@@ -160,16 +160,16 @@ sequenceDiagram
     Agent->>+ReActLoop:run(query)
     ReActLoop->>+ReActLoop:reasoner(query, [], tools)
     Note right of ReActLoop: I need to use bash with `ls`
-    
+
     ReActLoop->>+Memory: Store thought
 
     ReActLoop->>+Tool: execute(command=ls)
     Tool-->>-ReActLoop: ToolResult(stdout=". .. file1 file2")
-    
+
     ReActLoop->>+Memory: Store result
     ReActLoop->>-ReActLoop: reasoner(query, [step], tools)
     Note right of ReActLoop: Done!
-    
+
     ReActLoop-->>-Agent: final_answer
 ```
 
@@ -197,7 +197,7 @@ graph LR
     D -->|Yes| B
     D -->|No| E[Clear / Reset]
     end
-    
+
     style A fill:#e3f2fd
     style E fill:#ffebee
 ```
@@ -236,7 +236,7 @@ flowchart LR
     A --> O[Observation<br/>Process result]
     O --> T
     end
-    
+
     style T fill:#e3f2fd
     style A fill:#f3e5f5
     style O fill:#e8f5e9
@@ -311,7 +311,7 @@ sequenceDiagram
     participant Reasoner as LLM Reasoner
     participant Instructor
     participant OpenAI
-    
+
     Agent->>Reasoner: reasoner(query, steps, tools)
     Reasoner->>Reasoner: Build prompt with history
     Reasoner->>Instructor: chat.completions.create(
@@ -381,6 +381,36 @@ pytest --cov=simpla_loop --cov-report=html
 pytest tests/test_react_loop.py -v
 ```
 
+### Pre-commit Hooks
+
+The project uses [pre-commit](https://pre-commit.com/) to run automated checks before each commit. Install the hooks after cloning:
+
+```bash
+pip install -e ".[dev]"
+pre-commit install
+```
+
+The following hooks run automatically on `git commit`:
+
+| Hook | Purpose |
+|------|---------|
+| `check-ast` | Validates Python syntax |
+| `check-merge-conflict` | Detects unresolved merge conflict markers |
+| `check-yaml` / `check-toml` / `check-json` | Validates config file syntax |
+| `check-added-large-files` | Blocks files larger than 500 KB |
+| `trailing-whitespace` | Strips trailing whitespace |
+| `end-of-file-fixer` | Ensures files end with a newline |
+| `detect-secrets` | Prevents accidental secret commits |
+| `ruff` | Lints and auto-fixes Python code |
+| `ruff-format` | Formats Python code |
+| `pylint-similarity` | Flags duplicate code blocks (≥ 6 lines) |
+
+To run all hooks manually against the entire codebase:
+
+```bash
+pre-commit run --all-files
+```
+
 ### Code Quality
 
 ```bash
@@ -403,11 +433,11 @@ class CalculatorTool(Tool):
     @property
     def name(self) -> str:
         return "calculator"
-    
+
     @property
     def description(self) -> str:
         return "Perform arithmetic calculations"
-    
+
     @property
     def parameters(self) -> list[ToolParameter]:
         return [
@@ -418,7 +448,7 @@ class CalculatorTool(Tool):
                 required=True
             )
         ]
-    
+
     def execute(self, **kwargs) -> ToolResult:
         expression = kwargs.get("expression", "")
         try:
@@ -443,10 +473,10 @@ class MyLoop(Loop[MyState]):
     def step(self, state: MyState, memory, tools) -> LoopResult[MyState]:
         # Your logic here
         state.counter += 1
-        
+
         if state.counter >= 3:
             return LoopResult(state=state, done=True, output="Done!")
-        
+
         return LoopResult(state=state, done=False, output=None)
 ```
 
@@ -466,7 +496,7 @@ class MyLoop(Loop[MyState]):
 
 ## License
 
-MIT License - See LICENSE file for details.
+MIT License — See LICENSE file for details.
 
 ## Contributing
 

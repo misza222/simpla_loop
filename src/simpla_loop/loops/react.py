@@ -28,8 +28,9 @@ Example:
     >>> result = loop.run(state, memory, [calculator_tool])
 """
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any
 
 from simpla_loop.core.loop import Loop, LoopResult
 from simpla_loop.core.memory import Memory
@@ -70,7 +71,7 @@ class ReActStep:
 
     thought: str
     action: str | None = None
-    action_input: dict | None = None
+    action_input: dict[str, Any] | None = None
     observation: Any = None
     is_final: bool = False
 
@@ -137,7 +138,7 @@ class ReActState:
 
 # Type alias for the reasoning function
 # This is the hook for LLM integration
-Reasoner = Callable[[str, list[ReActStep], list[Tool]], dict]
+Reasoner = Callable[[str, list[ReActStep], list[Tool]], dict[str, Any]]
 """Type alias for the reasoning function.
 
 A Reasoner takes:

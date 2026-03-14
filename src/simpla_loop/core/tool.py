@@ -22,7 +22,7 @@ Example:
 """
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 
@@ -269,7 +269,8 @@ class Tool(ABC):
 
         Example:
             >>> tool.parameters
-            [ToolParameter(name='command', type='string', description='...', required=True)]
+            [ToolParameter(name='command', type='string', description='...',
+            required=True)]
         """
         return []
 
@@ -329,7 +330,7 @@ class Tool(ABC):
             >>> tool.validate({"command": "ls"})  # Valid
             None
             >>> tool.validate({"unknown": "value"})  # Invalid
-            ToolResult(success=False, data=None, error="Unknown parameters: {'unknown'}")
+            ToolResult(success=False, data=None, error="Unknown parameters: ...")
         """
         param_names = {p.name for p in self.parameters}
 

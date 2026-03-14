@@ -1,32 +1,11 @@
 """Tests for ReAct loop implementation."""
 
-from typing import Any
-
 import pytest
+from conftest import MockTool
 
-from simpla_loop.core.loop import LoopResult
-from simpla_loop.core.tool import Tool, ToolParameter, ToolResult
+from simpla_loop.core.exceptions import LoopError
 from simpla_loop.loops.react import ReActLoop, ReActState, ReActStep
 from simpla_loop.memory.in_memory import InMemoryMemory
-
-
-class MockTool(Tool):
-    """Mock tool for testing."""
-
-    def __init__(self, name: str, result: Any = None):
-        self._name = name
-        self._result = result or "mock_result"
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @property
-    def description(self) -> str:
-        return f"Mock tool {self._name}"
-
-    def execute(self, **kwargs) -> ToolResult:
-        return ToolResult.ok(self._result)
 
 
 class TestReActState:
@@ -189,7 +168,7 @@ class TestReActLoop:
         assert call_count == 2
 
     def test_run_max_iterations_reached(self):
-        """run() should raise error when max iterations reached."""
+        """run() should raise LoopError when max iterations reached."""
 
         def reasoner(query, steps, tools):
             return {
@@ -203,7 +182,7 @@ class TestReActLoop:
         memory = InMemoryMemory()
         tool = MockTool("mock_tool")
 
-        with pytest.raises(RuntimeError, match="did not complete"):
+        with pytest.raises(LoopError, match="did not complete"):
             loop.run(state, memory, [tool], max_iterations=3)
 
     def test_max_steps_limit(self):
@@ -221,3 +200,32 @@ class TestReActLoop:
 
         assert "error" in result
         assert "Max steps reached" in result["error"]
+
+
+class TestReActLoopCreateInitialState:
+    """Tests for ReActLoop.create_initial_state()."""
+
+    def test_creates_state_with_query(self):
+        """Initial state should contain the provided query."""
+        loop = ReActLoop(reasoner=lambda q, s, t: {})
+        state = loop.create_initial_state("hello")
+        assert state.query == "hello"
+
+    def test_default_max_steps(self):
+        """Initial state should default to max_steps=5."""
+        loop = ReActLoop(reasoner=lambda q, s, t: {})
+        state = loop.create_initial_state("test")
+        assert state.max_steps == 5
+
+    def test_custom_max_steps_via_kwargs(self):
+        """max_steps can be overridden via kwargs."""
+        loop = ReActLoop(reasoner=lambda q, s, t: {})
+        state = loop.create_initial_state("test", max_steps=10)
+        assert state.max_steps == 10
+
+    def test_initial_state_empty(self):
+        """Initial state should have no steps and current_step=0."""
+        loop = ReActLoop(reasoner=lambda q, s, t: {})
+        state = loop.create_initial_state("test")
+        assert state.steps == []
+        assert state.current_step == 0

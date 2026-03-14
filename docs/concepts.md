@@ -65,10 +65,10 @@ Simple but flexible. Best for:
 class ConversationMemory(Memory):
     def __init__(self):
         self.messages = []
-    
+
     def add_message(self, role: str, content: str):
         self.messages.append({"role": role, "content": content})
-    
+
     def get_context(self, n: int = 5) -> list:
         return self.messages[-n:]
 ```
@@ -82,7 +82,7 @@ class VectorMemory(Memory):
     def add(self, key: str, value: str):
         embedding = embed(value)
         self.vector_store.add(key, embedding, value)
-    
+
     def search(self, query: str, k: int = 5):
         query_emb = embed(query)
         return self.vector_store.similarity_search(query_emb, k)
@@ -128,17 +128,17 @@ class ResearchTool(Tool):
     def __init__(self):
         self.search = SearchTool()
         self.browser = BrowserTool()
-    
+
     def execute(self, topic: str):
         # Search for sources
         search_results = self.search.execute(query=topic)
-        
+
         # Visit top results
         summaries = []
         for url in search_results.data[:3]:
             page = self.browser.execute(url=url)
             summaries.append(summarize(page.data))
-        
+
         return ToolResult.ok(summaries)
 ```
 
@@ -164,11 +164,11 @@ Loops can retry or adapt:
 def step(self, state, memory, tools):
     # Try primary tool
     result = tools[0].execute(...)
-    
+
     if not result.success:
         # Try fallback
         result = tools[1].execute(...)
-    
+
     # ...
 ```
 
@@ -201,14 +201,14 @@ class PlanAndSolveLoop(Loop[PlanState]):
             # Planning phase
             state.plan = self.planner.create_plan(state.query)
             return LoopResult(state=state, done=False, output=None)
-        
+
         if state.current_step < len(state.plan):
             # Execution phase
             step = state.plan[state.current_step]
             result = self.execute_step(step, tools)
             state.current_step += 1
             return LoopResult(state=state, done=False, output=None)
-        
+
         # Done
         return LoopResult(state=state, done=True, output=aggregate_results())
 ```
@@ -225,23 +225,23 @@ class ReflexionLoop(Loop[ReflexionState]):
     def step(self, state, memory, tools):
         # Try to solve
         attempt = self.try_solve(state.query, tools)
-        
+
         # Evaluate
         evaluation = self.evaluate(attempt)
-        
+
         if evaluation.is_correct:
             return LoopResult(state=state, done=True, output=attempt.answer)
-        
+
         # Reflect and improve
         reflection = self.reflect(attempt, evaluation)
         state.attempts.append(Attempt(
             answer=attempt.answer,
             reflection=reflection
         ))
-        
+
         if len(state.attempts) >= self.max_attempts:
             return LoopResult(state=state, done=True, output=attempt.answer)
-        
+
         return LoopResult(state=state, done=False, output=None)
 ```
 
@@ -287,7 +287,7 @@ def test_full_agent_workflow():
         tools=[MockTool("mock", result="test")],
         config=AgentConfig(max_iterations=5)
     )
-    
+
     result = agent.run("Test query")
     assert result == "expected"
     assert len(agent.memory.get("tool_results")) == 1
@@ -317,7 +317,7 @@ class ThreadSafeMemory(Memory):
     def __init__(self):
         self._store = {}
         self._lock = Lock()
-    
+
     def add(self, key, value):
         with self._lock:
             self._store[key] = value
