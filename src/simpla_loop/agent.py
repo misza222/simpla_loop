@@ -27,8 +27,10 @@ from typing import Any
 
 import structlog
 
+from simpla_loop.core.exceptions import LoopError
 from simpla_loop.core.loop import Loop
 from simpla_loop.core.memory import Memory
+from simpla_loop.core.reporter import StepReporter
 from simpla_loop.core.tool import Tool
 
 
@@ -97,6 +99,7 @@ class Agent:
         memory: Memory,
         tools: list[Tool],
         config: AgentConfig | None = None,
+        reporter: StepReporter | None = None,
     ) -> None:
         """Initialize the agent.
 
@@ -107,6 +110,8 @@ class Agent:
                     calls unless clear() is called.
             tools: List of available tools. The loop decides which to use.
             config: Optional configuration. Uses defaults if not provided.
+            reporter: Optional step reporter for visualization or logging.
+                      Called on_run_start, after each on_step, and on_run_done.
 
         Returns:
             None
@@ -123,6 +128,7 @@ class Agent:
         self.memory = memory
         self.tools = tools
         self.config = config or AgentConfig()
+        self._reporter = reporter
         self._logger = structlog.get_logger()
 
         # Store last execution trace for inspection
@@ -168,14 +174,31 @@ class Agent:
         # Let the loop create its own initial state
         initial_state = self.loop.create_initial_state(query, **loop_kwargs)
 
-        # Run the loop
-        result = self.loop.run(
-            initial_state=initial_state,
-            memory=self.memory,
-            tools=self.tools,
-            max_iterations=self.config.max_iterations,
-            **loop_kwargs,
-        )
+        if self._reporter is not None:
+            self._reporter.on_run_start(self.tools)
+
+        # Drive the loop step-by-step so the reporter fires after each iteration.
+        # (Loop.run() is a convenience wrapper around step(); we replicate it here
+        # to gain per-step visibility without modifying the Loop abstraction.)
+        state = initial_state
+        final_output: Any = None
+        for _ in range(self.config.max_iterations):
+            step_result = self.loop.step(state, self.memory, self.tools)
+            state = step_result.state
+            if self._reporter is not None:
+                self._reporter.on_step(step_result)
+            if step_result.done:
+                final_output = step_result.output
+                break
+        else:
+            raise LoopError(
+                f"Loop did not complete within "
+                f"{self.config.max_iterations} iterations. "
+                f"Final state: {state}"
+            )
+
+        if self._reporter is not None:
+            self._reporter.on_run_done()
 
         # Store trace for debugging (loop may store trace in different ways)
         self._last_trace = getattr(self.loop, "_last_trace", None)
@@ -183,7 +206,7 @@ class Agent:
         if self.config.debug:
             self._logger.debug("agent_completed", memory=self.memory.get_all())
 
-        return result
+        return final_output
 
     def get_trace(self) -> Any:
         """Get the execution trace from the last run.

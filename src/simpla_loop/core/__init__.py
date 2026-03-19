@@ -12,6 +12,7 @@ from simpla_loop.core.exceptions import (
 )
 from simpla_loop.core.loop import Loop, LoopResult
 from simpla_loop.core.memory import Memory
+from simpla_loop.core.reporter import StepReporter
 from simpla_loop.core.tool import Tool, ToolParameter, ToolResult
 
 __all__ = [
@@ -22,6 +23,7 @@ __all__ = [
     "Loop",
     "LoopResult",
     "Memory",
+    "StepReporter",
     "Tool",
     "ToolParameter",
     "ToolResult",

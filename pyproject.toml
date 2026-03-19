@@ -28,6 +28,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+vis = [
+    # HTTP + WebSocket client used by AgentVisReporter
+    "requests>=2.31.0,<3.0",
+    "websocket-client>=1.7.0,<2.0",
+]
 dev = [
     "pytest>=7.0,<9.0",
     "pytest-cov",
